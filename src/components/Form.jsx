@@ -23,6 +23,7 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
   });
 
   const imageUrl = formData.photo || '/images/person_icon.svg';
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,26 +32,39 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Convert is_living field to boolean
+    const updatedFormData = {
+      ...formData,
+      is_living: formData.is_living === 'living',
+    };
+
+    // Create FormData to handle image file upload
+    const payload = new FormData();
+    Object.keys(updatedFormData).forEach((key) => {
+      payload.append(key, updatedFormData[key]);
+    });
+
     try {
       if (personData && personData.id) {
-        await updatePerson(personData.id, formData);  // Update if ID exists
+        await updatePerson(personData.id, payload);  // Update if ID exists
       } else {
-        await createPerson(formData);  // Create new person
+        console.log('Form Data:', payload);
+        await createPerson(payload);  // Create new person
       }
-      onClose();  // Close the form
+      setSuccessMessage('Person saved successfully!');  // Close the form
     } catch (error) {
-      console.error('Error saving person:', error);
+      if (error.response) {
+        console.error('Error details:', error.response.data); // Log error details from server
+      } else {
+        console.error('Error saving person:', error);
+      }
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFormData({ ...formData, photo: reader.result });
-      };
-      reader.readAsDataURL(file);
+      setFormData({ ...formData, photo: file });
     }
   };
 
@@ -61,7 +75,7 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
   return (
     <div className={`sliding-form ${visible ? 'visible' : ''}`}>
       <button onClick={onClose}>Close</button>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         {/* Photo section at the top */}
         <div className="photo-container">
           <div className="photo-icon">
@@ -247,6 +261,7 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
           />
         </div>
         <button type="submit">Save</button>
+        {successMessage && <div className="success-message">{successMessage}</div>}
       </form>
     </div>
   );

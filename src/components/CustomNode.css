@@ -65,6 +65,7 @@
   cursor: pointer;
   font-size: 0.2rem;
   width: 30px;
+  color: black;
 }
 
 .option-button:hover {

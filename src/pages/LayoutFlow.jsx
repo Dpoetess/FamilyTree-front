@@ -4,14 +4,39 @@ import '@xyflow/react/dist/style.css';
 import CustomNode from '../components/CustomNode';
 import { initialNodes, initialEdges } from '../components/nodes-edges';
 import Form from '../components/Form';
-import { getPerson } from '../service/api';
+import { getPerson, createPerson, updatePerson, createNode, getNodesByTree } from '../service/api';
+import { useLocation } from 'react-router-dom';
 
 
 export default function LayoutFlow() {
+  const location = useLocation();
+  const tree_id = location.state?.tree_id;
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);  // Manage selected person
   const [isFormVisible, setFormVisible] = useState(false);
+
+  // useEffect to fetch nodes on mount
+  useEffect(() => {
+    const fetchNodes = async () => {
+      try {
+        const nodesFromBackend = await getNodesByTree(tree_id);
+        const updatedNodes = nodesFromBackend.map(node => ({
+          id: node.id,  // Use the unique backend node ID
+          data: { label: node.person.first_name, personId: node.person.id },
+          position: node.position || { x: 0, y: 0 }, 
+          type: 'custom',
+        }));
+  
+        // Merge initial nodes with fetched nodes, preventing overwriting the initial root node
+        setNodes(prevNodes => [...prevNodes, ...updatedNodes]);
+      } catch (error) {
+        console.error('Error loading nodes:', error);
+      }
+    };
+  
+    if (tree_id) fetchNodes(); // Fetch nodes only if tree_id exists
+  }, [tree_id]);
 
   const handleNodeClick = async (nodeData) => {
     if (nodeData && nodeData.personId) {
@@ -33,15 +58,50 @@ export default function LayoutFlow() {
     setSelectedPerson(null);
   };
 
-  const handleSave = (updatedData) => {
-    setNodes(prevNodes =>
-      prevNodes.map(node =>
-        node.id === selectedPerson.id ? { ...node, data: { ...node.data, label: updatedData.first_name, photo: updatedData.photo } } : node
-      )
-    );
-    handleCloseForm();
+  const handleSave = async (updatedData) => {
+    if (selectedPerson && selectedPerson.id) {
+      // Updating existing person
+      try {
+        await updatePerson(selectedPerson.id, updatedData);
+        setNodes(prevNodes =>
+          prevNodes.map(node =>
+            node.id === selectedPerson.id
+              ? { ...node, data: { ...node.data, label: updatedData.first_name } }
+              : node
+          )
+        );
+      } catch (error) {
+        console.error('Error updating person:', error);
+      }
+    } else {
+      // Creating new person and node
+      try {
+        const personResponse = await createPerson(updatedData);
+        const person = personResponse.data; // Ensure proper data extraction
+  
+        // Create a node linked to the person and tree
+        const nodeResponse = await createNode({
+          person_id: person.id,
+          tree_id: tree_id, // Ensure tree_id is passed here
+        });
+  
+        const newNode = nodeResponse.data; // Ensure correct response handling
+  
+        // Add the new node to the state
+        setNodes(prevNodes => [
+          ...prevNodes,
+          {
+            id: newNode.id, // Use the ID returned from the backend
+            data: { label: person.first_name, personId: person.id },
+            position: { x: 100, y: 100 },
+            type: 'custom',
+          },
+        ]);
+      } catch (error) {
+        console.error('Error creating person or node:', error);
+      }
+    }
   };
-
 
   useEffect(() => {
     console.log('Nodes:', nodes);
@@ -168,7 +228,7 @@ export default function LayoutFlow() {
       <ReactFlow 
         nodes={nodes.map(node => ({
           ...node,
-          data: { ...node.data, addNode, nodes, updateNode, handleNodeClick },
+          data: { ...node.data, addNode, nodes, updateNode },
         }))}
         edges={edges}
         nodeTypes={{ custom: CustomNode }}

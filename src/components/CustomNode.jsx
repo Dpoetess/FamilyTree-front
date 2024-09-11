@@ -4,7 +4,7 @@ import { rootId } from './nodes-edges';
 import './CustomNode.css';
 
 
-const CustomNode = ({ id, data, handleNodeClick, updateNode }) => {
+const CustomNode = ({ id, data, updateNode }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [hoveringOptions, setHoveringOptions] = useState(false);
 
@@ -18,17 +18,17 @@ const CustomNode = ({ id, data, handleNodeClick, updateNode }) => {
     }
     
     // Only trigger the form if the click is not on a button or an option
-    if (typeof handleNodeClick === 'function') {
-      handleNodeClick(data); // Call the handler to set the selected person
+    /* if (typeof handleNodeClick === 'function') {
+      handleNodeClick(data);
     } else {
       console.error('handleNodeClick is not a function');
-    }
+    } */
   };
 
-  const handleSave = (updatedData) => {
+/*   const handleSave = (updatedData) => {
     updateNode(id, updatedData); // Function to update node data
   };
-
+ */
   const handleRightClick = (event) => {
     event.stopPropagation(); // Prevent the event from bubbling up
     if (hasSpouse) {
@@ -87,28 +87,20 @@ const CustomNode = ({ id, data, handleNodeClick, updateNode }) => {
   const imageUrl = data.photo || '/images/person_icon.svg';  // Placeholder if no photo
 
   const currentPosition = data.position || { x: 0, y: 0 };
-  console.log('Current position:', currentPosition);
 
   const hasSpouse = data.nodes ? data.nodes.some(node => node.data.spouseOf === id) : false;
   //const isSpouse = data.hasSpouse;
   const spouses = data.nodes?.filter(node => node.data.spouseOf === id) || [];
-  console.log('All Spouses:', spouses);
-
   const leftSpouse = spouses.find(node => node.position.x < currentPosition.x);
   const rightSpouse = spouses.find(node => node.position.x > currentPosition.x);
-  console.log('Left Spouse:', leftSpouse);
-  console.log('Right Spouse:', rightSpouse);
 
   const effectiveRightSpouse = leftSpouse
     ? data.nodes.find(node => node.id === rootId && node.position.x > leftSpouse.position.x)
     : rightSpouse;
-  console.log('Left Spouse:', leftSpouse);
-  console.log('Effective Right Spouse:', effectiveRightSpouse);
 
   const isLeftSpouse = leftSpouse && leftSpouse.position && leftSpouse.position.x < currentPosition.x && leftSpouse.id !== rootId;
   const isRightSpouse = rightSpouse && rightSpouse.position && rightSpouse.position.x > currentPosition.x && rightSpouse.id !== rootId;
-  console.log('Is Left Spouse:', isLeftSpouse);
-  console.log('Is Right Spouse:', isRightSpouse);
+
   
 /*   // Calculate the midpoint for child node creation
   const midpoint = leftSpouse && rightSpouse
@@ -128,7 +120,7 @@ const CustomNode = ({ id, data, handleNodeClick, updateNode }) => {
         src={imageUrl}
         alt="Profile"
         style={imageStyle}
-      />
+        />
       
       <div style={nameStyle}>{data.label}</div>
 
