@@ -14,7 +14,7 @@ export const initialTree = {
 // Define initial nodes with one root node
 export const initialNodes = [
   {
-    id: '1',
+    id: 'root-1',
     position: { x: 300, y: 300 },
     data: { label: 'Me', hasParents: false, photo: null },
     type: 'custom',
