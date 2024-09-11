@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPerson, updatePerson } from '../service/api';
 import './form.css'; // Import the CSS file
 
 const Form = ({ visible, onClose, personData, onSubmit }) => {
@@ -21,14 +22,25 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
     notes: personData.notes || '',
   });
 
+  const imageUrl = formData.photo || '/images/person_icon.svg';
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    try {
+      if (personData && personData.id) {
+        await updatePerson(personData.id, formData);  // Update if ID exists
+      } else {
+        await createPerson(formData);  // Create new person
+      }
+      onClose();  // Close the form
+    } catch (error) {
+      console.error('Error saving person:', error);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -53,11 +65,7 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
         {/* Photo section at the top */}
         <div className="photo-container">
           <div className="photo-icon">
-            {formData.photo ? (
-              <img src={formData.photo} alt="Profile" />
-            ) : (
-              <span>No Photo</span>
-            )}
+              <img src={imageUrl} alt="ProfilePhoto" />
             <button
               className="change-photo-button"
               onClick={triggerFileInput}

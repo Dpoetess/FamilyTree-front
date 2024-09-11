@@ -84,6 +84,8 @@ const CustomNode = ({ id, data, handleNodeClick, updateNode }) => {
     marginTop: '5px',
   };
 
+  const imageUrl = data.photo || '/images/person_icon.svg';  // Placeholder if no photo
+
   const currentPosition = data.position || { x: 0, y: 0 };
   console.log('Current position:', currentPosition);
 
@@ -122,13 +124,12 @@ const CustomNode = ({ id, data, handleNodeClick, updateNode }) => {
   
   return (
     <div className="custom-node" onMouseLeave={handleMouseLeaveNode} style={cardStyle} onClick={handleClick}>
-      {data.photo && (
-        <img
-          src='/public/images/Lynn_photo.jpg'
-          alt="Profile"
-          style={imageStyle}
-        />
-      )}
+      <img
+        src={imageUrl}
+        alt="Profile"
+        style={imageStyle}
+      />
+      
       <div style={nameStyle}>{data.label}</div>
 
       {/* For child nodes, add top handle */}
