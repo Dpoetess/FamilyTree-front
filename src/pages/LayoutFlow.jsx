@@ -1,19 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ReactFlow, Controls } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import CustomNode from '../components/CustomNode';
 import { initialNodes, initialEdges } from '../components/nodes-edges';
+import Form from '../components/Form';
 
 
 export default function LayoutFlow() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState([]);
+  const [selectedPerson, setSelectedPerson] = useState(null);  // Manage selected person
+  const [isFormVisible, setFormVisible] = useState(false);
+
+  const handleNodeClick = (nodeData) => {
+    setSelectedPerson(nodeData);
+    setFormVisible(true);
+  };
+
+  const handleCloseForm = () => {
+    setFormVisible(false);
+    setSelectedPerson(null);
+  };
+
+  const handleSave = (updatedData) => {
+    setNodes(prevNodes =>
+      prevNodes.map(node =>
+        node.id === selectedPerson.id ? { ...node, data: { ...node.data, ...updatedData } } : node
+      )
+    );
+    handleCloseForm();
+  };
+
 
   useEffect(() => {
     console.log('Nodes:', nodes);
   }, [nodes]);
 
-  const addNode = (parentId, direction, type) => {
+  const addNode = useCallback((parentId, direction, type) => {
     const parentNode = nodes.find(n => n.id === parentId);
     if (!parentNode) return;
 
@@ -23,8 +46,8 @@ export default function LayoutFlow() {
         const newNodeId2 = `${nodes.length + 2}`;
 
         const spacing = 150;
-        const parent1Position = { x: parentNode.position.x - spacing / 2, y: parentNode.position.y - 100 };
-        const parent2Position = { x: parentNode.position.x + spacing / 2, y: parentNode.position.y - 100 };
+        const parent1Position = { x: parentNode.position.x - spacing / 2, y: parentNode.position.y - 200 };
+        const parent2Position = { x: parentNode.position.x + spacing / 2, y: parentNode.position.y - 200 };
 
         const newParent1 = { id: newNodeId1, position: parent1Position, data: { label: `Parent ${newNodeId1}`, spouseOf: newNodeId2, parentOf: parentId }, type: 'custom' };
         const newParent2 = { id: newNodeId2, position: parent2Position, data: { label: `Parent ${newNodeId2}`, spouseOf: newNodeId1, parentOf: parentId }, type: 'custom' };
@@ -48,8 +71,8 @@ export default function LayoutFlow() {
           const parent1Id = `${nodes.length + 2}`;
           const parent2Id = `${nodes.length + 3}`;
 
-          const parent1Position = { x: (parentNode.position.x + siblingPosition.x) / 2 - 75, y: parentNode.position.y - 100 };
-          const parent2Position = { x: (parentNode.position.x + siblingPosition.x) / 2 + 75, y: parentNode.position.y - 100 };
+          const parent1Position = { x: (parentNode.position.x + siblingPosition.x) / 2 - 75, y: parentNode.position.y - 200 };
+          const parent2Position = { x: (parentNode.position.x + siblingPosition.x) / 2 + 75, y: parentNode.position.y - 200 };
 
           const newParent1 = { id: parent1Id, position: parent1Position, data: { label: `Parent ${parent1Id}`, spouseOf: parent2Id }, type: 'custom' };
           const newParent2 = { id: parent2Id, position: parent2Position, data: { label: `Parent ${parent2Id}`, spouseOf: parent1Id }, type: 'custom' };
@@ -119,6 +142,14 @@ export default function LayoutFlow() {
       });
     }
   }
+  });
+
+  const updateNode = (id, updatedData) => {
+    setNodes(prevNodes =>
+      prevNodes.map(node =>
+        node.id === id ? { ...node, data: { ...node.data, ...updatedData } } : node
+      )
+    );
   };
 
   return (
@@ -126,14 +157,23 @@ export default function LayoutFlow() {
       <ReactFlow 
         nodes={nodes.map(node => ({
           ...node,
-          data: { ...node.data, addNode, nodes },
+          data: { ...node.data, addNode, nodes, updateNode, handleNodeClick },
         }))}
         edges={edges}
         nodeTypes={{ custom: CustomNode }}
+        onNodeClick={(_, node) => handleNodeClick(node.data)}
         fitView
       >
         <Controls />
       </ReactFlow>
+      {isFormVisible && selectedPerson && (
+        <Form
+          visible={isFormVisible}
+          onClose={handleCloseForm}
+          personData={selectedPerson}
+          onSubmit={handleSave}
+        />
+      )}
     </div>
   );
 }

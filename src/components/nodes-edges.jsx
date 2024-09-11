@@ -16,7 +16,7 @@ export const initialNodes = [
   {
     id: '1',
     position: { x: 300, y: 300 },
-    data: { label: 'Root', hasParents: false },
+    data: { label: 'Root', hasParents: false, photo: '/assets/images/Lynn_photo.jpg' },
     type: 'custom',
   }
 ];
