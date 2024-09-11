@@ -9,14 +9,16 @@
 
 /* Initially hide the top and right buttons */
 .custom-node .top-button,
-.custom-node .right-button {
+.custom-node .right-button,
+.custom-node .add-child-button {
   display: none;
   cursor: pointer;
 }
 
-/* Show the top and right buttons on hover */  
+/* Show the top and right buttons on hover */
 .custom-node:hover .top-button,
-.custom-node:hover .right-button {
+.custom-node:hover .right-button,
+.custom-node:hover .add-child-button {
   display: inline;
 }
 
@@ -24,6 +26,13 @@
 .custom-node .top-button {
   position: absolute;
   top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.custom-node .add-child-button{
+  position: absolute;
+  bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -62,7 +71,7 @@
   background-color: #e9ecef;
 }
 
-.midpoint-node {
+/* .midpoint-node {
   width: 0;
   height: 0;
   padding: 0;
@@ -75,3 +84,4 @@
   width: 10px;
   height: 10px;
 }
+ */

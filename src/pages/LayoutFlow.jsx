@@ -9,6 +9,10 @@ export default function LayoutFlow() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState([]);
 
+  useEffect(() => {
+    console.log('Nodes:', nodes);
+  }, [nodes]);
+
   const addNode = (parentId, direction, type) => {
     const parentNode = nodes.find(n => n.id === parentId);
     if (!parentNode) return;
@@ -22,8 +26,8 @@ export default function LayoutFlow() {
         const parent1Position = { x: parentNode.position.x - spacing / 2, y: parentNode.position.y - 100 };
         const parent2Position = { x: parentNode.position.x + spacing / 2, y: parentNode.position.y - 100 };
 
-        const newParent1 = { id: newNodeId1, position: parent1Position, data: { label: `Parent ${newNodeId1}`, spouseOf: newNodeId2 }, type: 'custom' };
-        const newParent2 = { id: newNodeId2, position: parent2Position, data: { label: `Parent ${newNodeId2}`, spouseOf: newNodeId1 }, type: 'custom' };
+        const newParent1 = { id: newNodeId1, position: parent1Position, data: { label: `Parent ${newNodeId1}`, spouseOf: newNodeId2, parentOf: parentId }, type: 'custom' };
+        const newParent2 = { id: newNodeId2, position: parent2Position, data: { label: `Parent ${newNodeId2}`, spouseOf: newNodeId1, parentOf: parentId }, type: 'custom' };
 
         setNodes(prevNodes => [
           ...prevNodes,
@@ -92,18 +96,39 @@ export default function LayoutFlow() {
           updatedParentNode,
           newSpouseNode,
         ]);
-      }
+    } else if (direction === 'bottom') {
+      const newNodeId = `${nodes.length + 1}`;
+      const childPosition = {
+        x: parentNode.position.x,
+        y: parentNode.position.y - 150, // Adjust as needed
+      };
+  
+      const newChildNode = {
+        id: newNodeId,
+        position: childPosition,
+        data: { label: `Child ${newNodeId}`, parentOf: parentId },
+        type: 'custom',
+      };
+  
+      console.log('Creating child node:', newChildNode); // Debugging line
+  
+      setNodes(prevNodes => {
+        const updatedNodes = [...prevNodes, newChildNode];
+        console.log('Updated nodes:', updatedNodes); // Debugging line
+        return updatedNodes;
+      });
     }
+  }
   };
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <ReactFlow 
-        nodes={nodes.map((node) => ({
+        nodes={nodes.map(node => ({
           ...node,
           data: { ...node.data, addNode, nodes },
         }))}
-        edges={edges} // No edges will be rendered
+        edges={edges}
         nodeTypes={{ custom: CustomNode }}
         fitView
       >
