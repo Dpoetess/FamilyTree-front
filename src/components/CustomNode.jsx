@@ -9,6 +9,21 @@ const CustomNode = ({ id, data }) => {
   // Check if a spouse already exists for the current node
   const hasSpouse = data.nodes ? data.nodes.some(node => node.data.spouseOf === id) : false;
 
+  // Check if the current node is a spouse
+  const isSpouse = data.hasSpouse;
+
+  // Get the position of the current node
+  const currentPosition = data.position || { x: 0, y: 0 };
+
+  // Check if there is a spouse with the same spouseOf
+  const spouse = data.nodes ? data.nodes.find(node => node.data.spouseOf === id) : null;
+   
+  // Determine if the current node is a left spouse
+  const isLeftSpouse = spouse && spouse.position.x < currentPosition.x;
+  
+  // Determine if the current node is a right spouse
+  const isRightSpouse = spouse && spouse.position.x > currentPosition.x;
+  
   const handleRightClick = () => {
     if (hasSpouse) {
       // Automatically add a sibling if a spouse exists
@@ -30,40 +45,27 @@ const CustomNode = ({ id, data }) => {
       setShowOptions(false);
     }
   };
-
-
-
+  
+  
   return (
     <div className="custom-node" onMouseLeave={handleMouseLeaveNode}>
-      {data.label}
+      {data.label && data.label}
 
-      {/* Left handle for root node */}
-      <Handle
-        type="source"
-        position="left"
-        id="spouse-left"
-        style={{ background: '#555' }}
-      />
-
-      {/* Right handle for spouse node */}
-      <Handle
-        type="target"
-        position="right"
-        id="spouse-right"
-        style={{ background: '#555' }}
-      />
-
-      {!data.hasParents && !hoveringOptions && (
+      
+      {/* For child nodes, add top handle */}
+      {!data.hasParents && !isLeftSpouse && (
         <button className="top-button" onClick={() => data.addNode(id, 'top')}>
           +
         </button>
       )}
 
-      {!showOptions && (
+      {/* Right button for adding sibling or spouse */}
+      {!isLeftSpouse && !showOptions && (
         <button className="right-button" onClick={handleRightClick}>
           +
         </button>
       )}
+
 
       {/* Show options only if no spouse exists */}
       {showOptions && (
@@ -83,7 +85,7 @@ const CustomNode = ({ id, data }) => {
           </button>
 
           {/* Show "Add Spouse" button only if no spouse exists */}
-          {!hasSpouse && (
+          {!hasSpouse &&(
             <button className="option-button" onClick={() => handleOptionClick('spouse')}>
               Add Spouse
             </button>
@@ -93,6 +95,7 @@ const CustomNode = ({ id, data }) => {
     </div>
   );
 };
+
 
 
 export default CustomNode;
