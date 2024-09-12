@@ -1,63 +1,69 @@
 .custom-node {
-    padding: 10px;
-    border: 1px solid black;
-    border-radius: 5px;
-    position: relative;
-    width: 60px;
-    height: 36px;
-  }
-
-/* Initially hide the top and right buttons */
-.custom-node .top-button,
-.custom-node .right-button {
-    display: none;
-    cursor: pointer;
-  }
-
-/* Show the top and right buttons on hover */  
-.custom-node:hover .top-button,
-.custom-node:hover .right-button {
-    display: inline;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  position: relative;
+  width: 60px;
+  height: 36px;
 }
 
-/* Positioning the top "+" button */
+.custom-node .top-button,
+.custom-node .right-button,
+.custom-node .add-child-button {
+  display: none;
+  cursor: pointer;
+  padding: 0.1rem;
+}
+
+.custom-node:hover .top-button,
+.custom-node:hover .right-button,
+.custom-node:hover .add-child-button {
+  display: inline;
+}
+
 .custom-node .top-button {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
-  /* Positioning the right "+" button */
+.custom-node .add-child-button{
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .custom-node .right-button {
-    position: absolute;
-    right: -15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-  }
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
 
-/* Positioning the options menu */
 .options-menu {
-    position:absolute !important;
-    top: 50% !important;
-    left: 85px !important;
-    transform: translateY(-50%) !important; 
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  
+  position:absolute !important;
+  top: 50% !important;
+  left: 85px !important;
+  transform: translateY(-50%) !important; 
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .option-button {
-    padding: 2px 5px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    background-color: #f8f9fa;
-    cursor: pointer;
-    font-size: 0.2rem;
-    width: 30px;
-  }
-  
+  padding: 2px 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  font-size: 0.2rem;
+  width: 30px;
+  color: black;
+}
+
 .option-button:hover {
-    background-color: #e9ecef;
-  }
+  background-color: #e9ecef;
+}

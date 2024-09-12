@@ -1,0 +1,18 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #e4e4e5;
+  }
+  
+  .navbar-logo img {
+    height: 40px;
+    width: auto;
+  }
+  
+  .navbar-user img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }

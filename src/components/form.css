@@ -1,0 +1,146 @@
+.sliding-form {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 35%;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;
+    padding: 20px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+  
+  .sliding-form.visible {
+    transform: translateX(0);
+  }
+  
+  .sliding-form button {
+    margin-bottom: 5px;
+  }
+
+  .sliding-form input,
+  .sliding-form select,
+  .sliding-form textarea {
+    width: 95%;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  
+  .sliding-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .sliding-form button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .sliding-form button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+.select-fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.selectors {
+    height:fit-content;
+}
+
+.photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .photo-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: visible;
+  }
+  
+  .photo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .change-photo-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .change-photo-button:hover {
+    background-color: #45a049;
+  }
+  
+  #file-input {
+    display: none;
+  }
+  
+.inline-fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  
+  
+  .inline-fields .wide-input {
+    width: 100%; 
+  }
+  
+  .day-field, .month-field {
+    width: 1.5rem;
+  }
+
+  .year-field {
+    width: 3rem;
+  }
+
+  .date-place-fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .date-place-fields input {
+    width: 30%;
+  }
+  
+  .date-columns {
+    display: flex;
+    gap: 1.5rem;
+  }

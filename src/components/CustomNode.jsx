@@ -1,28 +1,36 @@
-import React, {useState, useCallback} from 'react';
-import { Handle } from '@xyflow/react';
+import React, { useState } from 'react';
+import { rootId } from './nodes-edges';
 import './CustomNode.css';
 
-const CustomNode = ({ id, data }) => {
+
+const CustomNode = ({ id, data, updateNode }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [hoveringOptions, setHoveringOptions] = useState(false);
 
-  // Check if a spouse already exists for the current node
-  const hasSpouse = data.nodes ? data.nodes.some(node => node.data.spouseOf === id) : false;
+  const handleClick = (event) => {
 
-  const handleRightClick = () => {
+    if (
+      event.target.classList.contains('plus-button') || 
+      event.target.closest('.options-menu') 
+    ) {
+      return;
+    }
+    
+  };
+
+  const handleRightClick = (event) => {
+    event.stopPropagation(); 
     if (hasSpouse) {
-      // Automatically add a sibling if a spouse exists
       data.addNode(id, 'right', 'sibling');
     } else {
-      // Show options (Add Sibling / Add Spouse) if no spouse exists
       setShowOptions(true);
     }
   };
 
+
   const handleOptionClick = (type) => {
-    // Call addNode function with 'right' direction for sibling/spouse creation
-    data.addNode(id, 'right', type); // Trigger the node addition
-    setShowOptions(false); // Hide options after adding a node
+    data.addNode(id, 'right', type); 
+    setShowOptions(false); 
   };
 
   const handleMouseLeaveNode = () => {
@@ -30,40 +38,92 @@ const CustomNode = ({ id, data }) => {
       setShowOptions(false);
     }
   };
+  
+  const handleAddChild = (event) => {
+    event.stopPropagation(); 
+    console.log('Adding child node');
+    data.addNode(id, 'bottom');
+  };
 
+  const cardStyle = {
+    width: '70px',
+    height: '110px',
+    padding: '10px',
+    border: '1px solid black',
+    borderRadius: '8px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+  };
 
+  const imageStyle = {
+    width: '80%',
+    height: '80%',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    marginBottom: '2rem',
+  };
+
+  const nameStyle = {
+    fontSize: '12px',
+    textAlign: 'center',
+    marginTop: '5px',
+  };
+
+  const imageUrl = data.photo || '/images/person_icon.svg';
+
+  const currentPosition = data.position || { x: 0, y: 0 };
+
+  const hasSpouse = data.nodes ? data.nodes.some(node => node.data.spouseOf === id) : false;
+  const spouses = data.nodes?.filter(node => node.data.spouseOf === id) || [];
+  const leftSpouse = spouses.find(node => node.position.x < currentPosition.x);
+  const rightSpouse = spouses.find(node => node.position.x > currentPosition.x);
+
+  const effectiveRightSpouse = leftSpouse
+    ? data.nodes.find(node => node.id === rootId && node.position.x > leftSpouse.position.x)
+    : rightSpouse;
+
+  const isLeftSpouse = leftSpouse && leftSpouse.position && leftSpouse.position.x < currentPosition.x && leftSpouse.id !== rootId;
+  const isRightSpouse = rightSpouse && rightSpouse.position && rightSpouse.position.x > currentPosition.x && rightSpouse.id !== rootId;
 
   return (
-    <div className="custom-node" onMouseLeave={handleMouseLeaveNode}>
-      {data.label}
+    <div className="custom-node" onMouseLeave={handleMouseLeaveNode} style={cardStyle} onClick={handleClick}>
+      <img
+        src={imageUrl}
+        alt="Profile"
+        style={imageStyle}
+        />
+      
+      <div style={nameStyle}>{data.label}</div>
 
-      {/* Left handle for root node */}
-      <Handle
-        type="source"
-        position="left"
-        id="spouse-left"
-        style={{ background: '#555' }}
-      />
-
-      {/* Right handle for spouse node */}
-      <Handle
-        type="target"
-        position="right"
-        id="spouse-right"
-        style={{ background: '#555' }}
-      />
-
-      {!data.hasParents && !hoveringOptions && (
-        <button className="top-button" onClick={() => data.addNode(id, 'top')}>
+      {/* For child nodes, add top handle */}
+      {!data.hasParents && !isLeftSpouse && (
+        <button 
+          className="top-button plus-button" 
+          onClick={(event) => {
+            event.stopPropagation(); 
+            data.addNode(id, 'top');
+          }}
+        >
           +
         </button>
       )}
 
-      {!showOptions && (
-        <button className="right-button" onClick={handleRightClick}>
+      {/* Right button for adding sibling or spouse */}
+      {!isLeftSpouse && !showOptions && (
+        <button 
+          className="right-button plus-button" 
+          onClick={(event) => {
+            event.stopPropagation(); 
+            handleRightClick(event);
+          }}
+        >
           +
         </button>
       )}
+
 
       {/* Show options only if no spouse exists */}
       {showOptions && (
@@ -78,21 +138,43 @@ const CustomNode = ({ id, data }) => {
           }}
         >
           {/* Always show "Add Sibling" button */}
-          <button className="option-button" onClick={() => handleOptionClick('sibling')}>
+          <button 
+            className="option-button plus-button" 
+            onClick={(event) => {
+              event.stopPropagation();
+              handleOptionClick('sibling');
+            }}
+          >
             Add Sibling
           </button>
 
           {/* Show "Add Spouse" button only if no spouse exists */}
-          {!hasSpouse && (
-            <button className="option-button" onClick={() => handleOptionClick('spouse')}>
+          {!hasSpouse &&(
+            <button 
+              className="option-button plus-button" 
+              onClick={(event) => {
+                event.stopPropagation(); 
+                handleOptionClick('spouse');
+              }}
+            >
               Add Spouse
             </button>
           )}
         </div>
       )}
+
+      {/* Button to add a child node */}
+      {data.hasSpouse && (
+        <button
+          className="add-child-button plus-button" 
+          onClick={handleAddChild}
+        >
+          +
+        </button>
+      )}
+      
     </div>
   );
 };
-
 
 export default CustomNode;
