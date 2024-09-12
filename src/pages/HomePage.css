@@ -22,10 +22,11 @@
   }
   
   button {
-    padding: 8px 12px;
-    border: none;
-    background-color: #007bff;
+    padding: 6px 8px;
+    border: 1px solid black;
+    background-color: #094D92;
     color: white;
     border-radius: 4px;
     cursor: pointer;
+    gap: 1rem;
   }

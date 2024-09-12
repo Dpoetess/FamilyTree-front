@@ -1,7 +1,5 @@
-// Define the root node ID
 export const rootId = '1';
 
-// Define the initial tree structure with one root node
 export const initialTree = {
   id: '1',
   name: 'Me',
@@ -11,7 +9,6 @@ export const initialTree = {
   spouses: []
 };
 
-// Define initial nodes with one root node
 export const initialNodes = [
   {
     id: 'root-1',
@@ -21,5 +18,4 @@ export const initialNodes = [
   }
 ];
 
-// Define initial edges (none in this case)
 export const initialEdges = [];

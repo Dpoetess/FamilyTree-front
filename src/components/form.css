@@ -1,4 +1,3 @@
-/* Form container */
 .sliding-form {
     position: fixed;
     top: 0;
@@ -17,12 +16,10 @@
     transform: translateX(0);
   }
   
-  /* Close button */
   .sliding-form button {
     margin-bottom: 5px;
   }
-  
-  /* Form input fields */
+
   .sliding-form input,
   .sliding-form select,
   .sliding-form textarea {
@@ -40,7 +37,6 @@
     font-weight: bold;
   }
   
-  /* Save button */
   .sliding-form button[type="submit"] {
     background-color: #4CAF50;
     color: white;
@@ -64,7 +60,6 @@
     height:fit-content;
 }
 
-/* Photo container at the top, centered */
 .photo-container {
     display: flex;
     flex-direction: column;
@@ -92,7 +87,6 @@
     border-radius: 50%;
   }
   
-  /* Small button to change photo */
   .change-photo-button {
     position: absolute;
     bottom: 0;
@@ -113,12 +107,10 @@
     background-color: #45a049;
   }
   
-  /* Hide the file input */
   #file-input {
     display: none;
   }
   
-  /* Container for date and place of birth fields */
 .inline-fields {
     display: flex;
     justify-content: space-between;
@@ -127,7 +119,7 @@
   
   
   .inline-fields .wide-input {
-    width: 100%; /* Full width for larger fields like place of birth */
+    width: 100%; 
   }
   
   .day-field, .month-field {
@@ -138,7 +130,6 @@
     width: 3rem;
   }
 
-  /* Container for date and place of death fields */
   .date-place-fields {
     display: flex;
     justify-content: space-between;
