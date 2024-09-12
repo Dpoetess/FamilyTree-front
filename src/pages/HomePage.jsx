@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import NavBar from '../components/NavBar';
-import { createTree, getTrees } from '../service/api'; // Assume you have these API functions
+import { createTree, getTrees } from '../service/api';
 import './HomePage.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +9,6 @@ const HomePage = () => {
   const navigate = useNavigate(); 
 
   useEffect(() => {
-    // Fetch user's trees if any exist
     const fetchTrees = async () => {
       try {
         const response = await getTrees();
@@ -30,7 +28,7 @@ const HomePage = () => {
           user: 1
         });
         setTrees([...trees, newTree]);
-        setTreeName(''); // Reset the input field
+        setTreeName('');
         navigate(`/tree/${newTree.id}`, { state: { tree_id: newTree.id } });
       } catch (error) {
         console.error('Error creating tree:', error);
@@ -53,7 +51,7 @@ const HomePage = () => {
             value={treeName}
             onChange={(e) => setTreeName(e.target.value)}
           />
-          <button onClick={handleCreateTree}>Create Tree</button>
+          <button className="create-tree-button" onClick={handleCreateTree}>Create Tree</button>
         </div>
 
         {Array.isArray(trees) && trees.length > 0 && (
@@ -62,7 +60,7 @@ const HomePage = () => {
             <ul>
               {trees.map((tree) => (
                 <li key={tree.id}>
-                  <button onClick={() => navigate(`/tree/${tree.id}`, { state: { tree_id: tree.id } })}>
+                  <button className="list-buttons"onClick={() => navigate(`/tree/${tree.id}`, { state: { tree_id: tree.id } })}>
                     {tree.name}
                   </button>
                 </li>

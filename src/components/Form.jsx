@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPerson, updatePerson } from '../service/api';
-import './form.css'; // Import the CSS file
+import './form.css'; 
 
-const Form = ({ visible, onClose, personData, onSubmit }) => {
+const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }) => {
   const [formData, setFormData] = useState({
     first_name: personData.first_name || '',
     middle_name: personData.middle_name || '',
@@ -24,6 +24,7 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
 
   const imageUrl = formData.photo || '/images/person_icon.svg';
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,32 +33,38 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Convert is_living field to boolean
+
+    if (isSubmitting) return; 
+    setIsSubmitting(true); 
+
     const updatedFormData = {
       ...formData,
       is_living: formData.is_living === 'living',
     };
-
-    // Create FormData to handle image file upload
-    const payload = new FormData();
-    Object.keys(updatedFormData).forEach((key) => {
-      payload.append(key, updatedFormData[key]);
-    });
-
+    
     try {
       if (personData && personData.id) {
-        await updatePerson(personData.id, payload);  // Update if ID exists
+        await updatePerson(personData.id, updatedFormData);  
       } else {
-        console.log('Form Data:', payload);
-        await createPerson(payload);  // Create new person
+        if (tree_id) {
+          updatedFormData.tree_id = tree_id;
+        } else {
+          throw new Error('tree_id is missing');
+        }
+        await createPerson(updatedFormData); 
       }
-      setSuccessMessage('Person saved successfully!');  // Close the form
+      setSuccessMessage('Person saved successfully!');  
+      if (onSubmit) {
+        onSubmit(updatedFormData);
+      }
     } catch (error) {
       if (error.response) {
-        console.error('Error details:', error.response.data); // Log error details from server
+        console.error('Error details:', error.response.data);
       } else {
         console.error('Error saving person:', error);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -71,6 +78,13 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
   const triggerFileInput = () => {
     document.getElementById('file-input').click();
   };
+
+  useEffect(() => {
+    return () => {
+      setIsSubmitting(false);
+    };
+  }, []);
+
 
   return (
     <div className={`sliding-form ${visible ? 'visible' : ''}`}>
@@ -260,7 +274,9 @@ const Form = ({ visible, onClose, personData, onSubmit }) => {
             onChange={handleInputChange}
           />
         </div>
-        <button type="submit">Save</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Saving...' : 'Save'}
+        </button>
         {successMessage && <div className="success-message">{successMessage}</div>}
       </form>
     </div>

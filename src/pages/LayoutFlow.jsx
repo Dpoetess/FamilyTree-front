@@ -11,31 +11,47 @@ import { useLocation } from 'react-router-dom';
 export default function LayoutFlow() {
   const location = useLocation();
   const tree_id = location.state?.tree_id;
+
+  console.log('Tree ID:', tree_id);
+
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState([]);
-  const [selectedPerson, setSelectedPerson] = useState(null);  // Manage selected person
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const [isFormVisible, setFormVisible] = useState(false);
 
-  // useEffect to fetch nodes on mount
   useEffect(() => {
     const fetchNodes = async () => {
       try {
         const nodesFromBackend = await getNodesByTree(tree_id);
-        const updatedNodes = nodesFromBackend.map(node => ({
-          id: node.id,  // Use the unique backend node ID
-          data: { label: node.person.first_name, personId: node.person.id },
-          position: node.position || { x: 0, y: 0 }, 
-          type: 'custom',
-        }));
+
+        const updatedNodes = nodesFromBackend.map(node => {
+          const person = node.person;
+        
+          return {
+            id: node.id, 
+            data: { label: person?.first_name || 'Unknown', personId: person?.id || null },
+            position: node.position || { x: 0, y: 0 }, 
+            type: 'custom',
+          };
+        });
+
+        setNodes(prevNodes => {
+          const mergedNodes = [...prevNodes];
   
-        // Merge initial nodes with fetched nodes, preventing overwriting the initial root node
-        setNodes(prevNodes => [...prevNodes, ...updatedNodes]);
+          updatedNodes.forEach(newNode => {
+            if (!mergedNodes.find(existingNode => existingNode.id === newNode.id)) {
+              mergedNodes.push(newNode);
+            }
+          });
+  
+          return mergedNodes;
+        });
       } catch (error) {
         console.error('Error loading nodes:', error);
       }
     };
   
-    if (tree_id) fetchNodes(); // Fetch nodes only if tree_id exists
+    if (tree_id) fetchNodes();
   }, [tree_id]);
 
   const handleNodeClick = async (nodeData) => {
@@ -48,7 +64,7 @@ export default function LayoutFlow() {
         console.error('Error fetching person data:', error);
       }
     } else {
-      setSelectedPerson(nodeData);  // Pass the nodeData to handle new person creation
+      setSelectedPerson(nodeData);
       setFormVisible(true);
     }
   };
@@ -60,43 +76,61 @@ export default function LayoutFlow() {
 
   const handleSave = async (updatedData) => {
     if (selectedPerson && selectedPerson.id) {
-      // Updating existing person
       try {
+        console.log('Updating person:', selectedPerson.id, updatedData); 
         await updatePerson(selectedPerson.id, updatedData);
-        setNodes(prevNodes =>
-          prevNodes.map(node =>
+        setNodes(prevNodes => {
+  
+          const updatedNodes = prevNodes.map(node =>
             node.id === selectedPerson.id
               ? { ...node, data: { ...node.data, label: updatedData.first_name } }
               : node
-          )
-        );
+          );
+  
+        return updatedNodes;
+        });
       } catch (error) {
-        console.error('Error updating person:', error);
+      console.error('Error updating person:', error);
       }
     } else {
-      // Creating new person and node
       try {
-        const personResponse = await createPerson(updatedData);
-        const person = personResponse.data; // Ensure proper data extraction
+        console.log('Creating new person with data:', updatedData);
+        
+        const { person, node } = await createPerson(updatedData); 
+        console.log('Person created:', person); 
   
-        // Create a node linked to the person and tree
+        if (node && node.error === 'Node already exists for this person in this tree.') {
+          console.log('Node already exists:', node);  
+          return;
+        }
+
+        console.log('Data being passed to createNode:', {
+          person_id: person.id, 
+          tree_id: tree_id, 
+        });
+
         const nodeResponse = await createNode({
-          person_id: person.id,
-          tree_id: tree_id, // Ensure tree_id is passed here
+        person_id: person.id,
+        tree_id: tree_id,
         });
   
-        const newNode = nodeResponse.data; // Ensure correct response handling
+        console.log('New node created:', nodeResponse); 
   
-        // Add the new node to the state
-        setNodes(prevNodes => [
-          ...prevNodes,
-          {
-            id: newNode.id, // Use the ID returned from the backend
-            data: { label: person.first_name, personId: person.id },
-            position: { x: 100, y: 100 },
-            type: 'custom',
-          },
-        ]);
+        setNodes(prevNodes => {
+          console.log('Previous nodes before adding new node:', prevNodes);
+  
+          const newNodes = [
+            ...prevNodes,
+            {
+              id: nodeResponse.id,  
+              data: { label: person.first_name, personId: person.id },  
+              position: { x: 100, y: 100 },
+              type: 'custom',
+            },
+          ];
+          console.log('New nodes after adding new node:', newNodes); 
+          return newNodes;
+        });
       } catch (error) {
         console.error('Error creating person or node:', error);
       }
@@ -194,7 +228,7 @@ export default function LayoutFlow() {
       const newNodeId = `${nodes.length + 1}`;
       const childPosition = {
         x: parentNode.position.x,
-        y: parentNode.position.y - 150, // Adjust as needed
+        y: parentNode.position.y - 150,
       };
   
       const newChildNode = {
@@ -204,11 +238,11 @@ export default function LayoutFlow() {
         type: 'custom',
       };
   
-      console.log('Creating child node:', newChildNode); // Debugging line
+      console.log('Creating child node:', newChildNode); 
   
       setNodes(prevNodes => {
         const updatedNodes = [...prevNodes, newChildNode];
-        console.log('Updated nodes:', updatedNodes); // Debugging line
+        console.log('Updated nodes:', updatedNodes); 
         return updatedNodes;
       });
     }
@@ -243,6 +277,7 @@ export default function LayoutFlow() {
           onClose={handleCloseForm}
           personData={selectedPerson}
           onSubmit={handleSave}
+          tree_id={tree_id}
         />
       )}
     </div>

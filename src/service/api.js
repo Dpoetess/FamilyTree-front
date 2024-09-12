@@ -5,14 +5,18 @@ const TREE_API_URL = 'http://127.0.0.1:8000/api/trees/';
 const NODE_API_URL = 'http://127.0.0.1:8000/api/nodes/'; 
 
 export const createPerson = async (personData) => {
-  try {
-    const response = await axios.post(API_URL, personData);
-    return response.data;  // Return the newly created person data
-  } catch (error) {
-    console.error('Error creating person:', error);
-    throw error;  // Rethrow to handle it in the calling function
-  }
-};
+    try {
+      const response = await axios.post(API_URL, personData, {
+        headers: {
+          'Content-Type': 'application/json',  // Set the Content-Type to JSON
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating person:', error);
+      throw error;
+    }
+  };
 
 export const getPerson = async (id) => {
     try {
@@ -25,9 +29,13 @@ export const getPerson = async (id) => {
   };
 
 export const updatePerson = async (id, updatedData) => {
-  try {
-    const response = await axios.put(`${API_URL}${id}/`, updatedData);
-    return response.data;  // Return the updated person data
+    try {
+        const response = await axios.put(`${API_URL}${id}/`, updatedData, {
+          headers: {
+            'Content-Type': 'application/json',  // Set the Content-Type to JSON
+          },
+        });
+        return response.data;
   } catch (error) {
     console.error('Error updating person:', error);
     throw error;  // Rethrow to handle it in the calling function
@@ -56,7 +64,11 @@ export const getTrees = async () => {
 
 export const createTree = async (treeData) => {
     try {
-      const response = await axios.post(TREE_API_URL, treeData);
+        const response = await axios.post(TREE_API_URL, treeData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
       return response.data;  // Return the newly created tree data
     } catch (error) {
       console.error('Error creating tree:', error);
@@ -76,7 +88,11 @@ export const createTree = async (treeData) => {
   
   export const updateTree = async (id, updatedData) => {
     try {
-      const response = await axios.put(`${TREE_API_URL}${id}/`, updatedData);
+        const response = await axios.put(`${TREE_API_URL}${id}/`, updatedData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
       return response.data;  // Return the updated tree data
     } catch (error) {
       console.error('Error updating tree:', error);
@@ -95,7 +111,11 @@ export const createTree = async (treeData) => {
 
   export const createNode = async (nodeData) => {
     try {
-      const response = await axios.post(NODE_API_URL, nodeData);
+        const response = await axios.post(NODE_API_URL, nodeData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
       return response.data;
     } catch (error) {
       console.error('Error creating node:', error);
@@ -125,7 +145,11 @@ export const createTree = async (treeData) => {
   
   export const updateNode = async (id, updatedData) => {
     try {
-      const response = await axios.put(`${NODE_API_URL}${id}/`, updatedData);
+        const response = await axios.put(`${NODE_API_URL}${id}/`, updatedData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
       return response.data;
     } catch (error) {
       console.error('Error updating node:', error);

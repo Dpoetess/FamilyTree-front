@@ -7,22 +7,20 @@
   height: 36px;
 }
 
-/* Initially hide the top and right buttons */
 .custom-node .top-button,
 .custom-node .right-button,
 .custom-node .add-child-button {
   display: none;
   cursor: pointer;
+  padding: 0.1rem;
 }
 
-/* Show the top and right buttons on hover */
 .custom-node:hover .top-button,
 .custom-node:hover .right-button,
 .custom-node:hover .add-child-button {
   display: inline;
 }
 
-/* Positioning the top "+" button */
 .custom-node .top-button {
   position: absolute;
   top: -15px;
@@ -37,7 +35,6 @@
   transform: translateX(-50%);
 }
 
-/* Positioning the right "+" button */
 .custom-node .right-button {
   position: absolute;
   right: -15px;
@@ -46,7 +43,6 @@
   cursor: pointer;
 }
 
-/* Positioning the options menu */
 .options-menu {
   position:absolute !important;
   top: 50% !important;
@@ -71,18 +67,3 @@
 .option-button:hover {
   background-color: #e9ecef;
 }
-
-/* .midpoint-node {
-  width: 0;
-  height: 0;
-  padding: 0;
-  background: none;
-  border: none;
-}
-
-.midpoint-node .react-flow__handle {
-  visibility: visible;
-  width: 10px;
-  height: 10px;
-}
- */

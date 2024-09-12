@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Handle } from '@xyflow/react';
 import { rootId } from './nodes-edges';
 import './CustomNode.css';
 
@@ -9,28 +8,18 @@ const CustomNode = ({ id, data, updateNode }) => {
   const [hoveringOptions, setHoveringOptions] = useState(false);
 
   const handleClick = (event) => {
-    // If the event target is a button (contains 'plus-button' class) or part of the options menu, prevent form from appearing
+
     if (
-      event.target.classList.contains('plus-button') ||  // Exclude all "+" buttons
-      event.target.closest('.options-menu')  // Exclude the "add-sibling" and "add-spouse" options
+      event.target.classList.contains('plus-button') || 
+      event.target.closest('.options-menu') 
     ) {
-      return; // Do nothing when clicking on the "+" buttons or options
+      return;
     }
     
-    // Only trigger the form if the click is not on a button or an option
-    /* if (typeof handleNodeClick === 'function') {
-      handleNodeClick(data);
-    } else {
-      console.error('handleNodeClick is not a function');
-    } */
   };
 
-/*   const handleSave = (updatedData) => {
-    updateNode(id, updatedData); // Function to update node data
-  };
- */
   const handleRightClick = (event) => {
-    event.stopPropagation(); // Prevent the event from bubbling up
+    event.stopPropagation(); 
     if (hasSpouse) {
       data.addNode(id, 'right', 'sibling');
     } else {
@@ -40,9 +29,8 @@ const CustomNode = ({ id, data, updateNode }) => {
 
 
   const handleOptionClick = (type) => {
-    // Call addNode function with 'right' direction for sibling/spouse creation
-    data.addNode(id, 'right', type); // Trigger the node addition
-    setShowOptions(false); // Hide options after adding a node
+    data.addNode(id, 'right', type); 
+    setShowOptions(false); 
   };
 
   const handleMouseLeaveNode = () => {
@@ -52,7 +40,7 @@ const CustomNode = ({ id, data, updateNode }) => {
   };
   
   const handleAddChild = (event) => {
-    event.stopPropagation(); // Prevent the event from bubbling up
+    event.stopPropagation(); 
     console.log('Adding child node');
     data.addNode(id, 'bottom');
   };
@@ -84,12 +72,11 @@ const CustomNode = ({ id, data, updateNode }) => {
     marginTop: '5px',
   };
 
-  const imageUrl = data.photo || '/images/person_icon.svg';  // Placeholder if no photo
+  const imageUrl = data.photo || '/images/person_icon.svg';
 
   const currentPosition = data.position || { x: 0, y: 0 };
 
   const hasSpouse = data.nodes ? data.nodes.some(node => node.data.spouseOf === id) : false;
-  //const isSpouse = data.hasSpouse;
   const spouses = data.nodes?.filter(node => node.data.spouseOf === id) || [];
   const leftSpouse = spouses.find(node => node.position.x < currentPosition.x);
   const rightSpouse = spouses.find(node => node.position.x > currentPosition.x);
@@ -101,19 +88,6 @@ const CustomNode = ({ id, data, updateNode }) => {
   const isLeftSpouse = leftSpouse && leftSpouse.position && leftSpouse.position.x < currentPosition.x && leftSpouse.id !== rootId;
   const isRightSpouse = rightSpouse && rightSpouse.position && rightSpouse.position.x > currentPosition.x && rightSpouse.id !== rootId;
 
-  
-/*   // Calculate the midpoint for child node creation
-  const midpoint = leftSpouse && rightSpouse
-    ? {
-        x: (leftSpouse.position.x + rightSpouse.position.x) / 2,
-        y: Math.min(leftSpouse.position.y, rightSpouse.position.y) - 50, // Adjust vertical offset as needed
-      }
-    : null;  
-  console.log('Midpoint:', midpoint); // Debugging line */
-  
-  
-
-  
   return (
     <div className="custom-node" onMouseLeave={handleMouseLeaveNode} style={cardStyle} onClick={handleClick}>
       <img
@@ -129,7 +103,7 @@ const CustomNode = ({ id, data, updateNode }) => {
         <button 
           className="top-button plus-button" 
           onClick={(event) => {
-            event.stopPropagation(); // Prevents the click from bubbling up to the card
+            event.stopPropagation(); 
             data.addNode(id, 'top');
           }}
         >
@@ -142,7 +116,7 @@ const CustomNode = ({ id, data, updateNode }) => {
         <button 
           className="right-button plus-button" 
           onClick={(event) => {
-            event.stopPropagation(); // Prevents the click from bubbling up to the card
+            event.stopPropagation(); 
             handleRightClick(event);
           }}
         >
@@ -167,7 +141,7 @@ const CustomNode = ({ id, data, updateNode }) => {
           <button 
             className="option-button plus-button" 
             onClick={(event) => {
-              event.stopPropagation();  // Prevents the click from bubbling up
+              event.stopPropagation();
               handleOptionClick('sibling');
             }}
           >
@@ -179,7 +153,7 @@ const CustomNode = ({ id, data, updateNode }) => {
             <button 
               className="option-button plus-button" 
               onClick={(event) => {
-                event.stopPropagation();  // Prevents the click from bubbling up
+                event.stopPropagation(); 
                 handleOptionClick('spouse');
               }}
             >
@@ -198,6 +172,7 @@ const CustomNode = ({ id, data, updateNode }) => {
           +
         </button>
       )}
+      
     </div>
   );
 };

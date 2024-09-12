@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <NavBar />  {/* Fixed NavBar at the top */}
+        <NavBar />  
         <div style={{ flexGrow: 1 }}>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -22,13 +22,3 @@ function App() {
 
 export default App;
 
-
-
-
-/* function App() {
-  return (
-    <div className="App" style={{ height: '100vh' }}>
-      <LayoutFlow />
-    </div>
-  );
-} */
