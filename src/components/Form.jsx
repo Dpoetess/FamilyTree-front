@@ -37,6 +37,13 @@ const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }
     if (isSubmitting) return; 
     setIsSubmitting(true); 
 
+    if (!formData.first_name || !formData.last_name) {
+      console.error('First Name and Last Name are required.');
+      setSuccessMessage('Please fill out both First Name and Last Name.');
+      setIsSubmitting(false);
+      return;
+    }
+
     const updatedFormData = {
       ...formData,
       is_living: formData.is_living === 'living',
@@ -60,8 +67,10 @@ const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }
     } catch (error) {
       if (error.response) {
         console.error('Error details:', error.response.data);
+        setSuccessMessage('Error: ' + JSON.stringify(error.response.data));
       } else {
         console.error('Error saving person:', error);
+        setSuccessMessage('An error occurred while saving the person.');
       }
     } finally {
       setIsSubmitting(false);

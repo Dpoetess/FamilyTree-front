@@ -45,6 +45,11 @@ const CustomNode = ({ id, data, updateNode }) => {
     data.addNode(id, 'bottom');
   };
 
+  const handleDeleteNode = (event) => {
+    event.stopPropagation();
+    console.log('delete node WIP')
+  }
+
   const cardStyle = {
     width: '70px',
     height: '110px',
@@ -173,6 +178,15 @@ const CustomNode = ({ id, data, updateNode }) => {
         </button>
       )}
       
+      {/* Button to delete a node */}
+      <button
+        className="delete-node-button menos-button" 
+        onClick={handleDeleteNode}
+      >
+          -
+      </button>
+      
+
     </div>
   );
 };

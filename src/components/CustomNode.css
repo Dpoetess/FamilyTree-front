@@ -9,7 +9,8 @@
 
 .custom-node .top-button,
 .custom-node .right-button,
-.custom-node .add-child-button {
+.custom-node .add-child-button, 
+.custom-node .delete-node-button {
   display: none;
   cursor: pointer;
   padding: 0.1rem;
@@ -17,7 +18,8 @@
 
 .custom-node:hover .top-button,
 .custom-node:hover .right-button,
-.custom-node:hover .add-child-button {
+.custom-node:hover .add-child-button,
+.custom-node .delete-node-button {
   display: inline;
 }
 
@@ -41,6 +43,16 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
+}
+
+.custom-node .delete-node-button{
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  background-color: red;
+  padding-top: 1px;
+  height: 0.8rem;
+  width: 0.8rem;
 }
 
 .options-menu {
