@@ -24,6 +24,7 @@ const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }
 
   const imageUrl = formData.photo || '/images/person_icon.svg';
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false); 
 
   const handleInputChange = (e) => {
@@ -39,15 +40,39 @@ const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }
 
     if (!formData.first_name || !formData.last_name) {
       console.error('First Name and Last Name are required.');
-      setSuccessMessage('Please fill out both First Name and Last Name.');
+      setErrorMessage('Please fill out both First Name and Last Name.');
       setIsSubmitting(false);
       return;
     }
+    
+    let personPhotoUrl = formData.photo;
+
+    if (formData.photo instanceof File) {
+      const formDataForUpload = new FormData();
+      formDataForUpload.append("file", formData.photo);
+      formDataForUpload.append("upload_preset", "FamilyMe"); // Replace with your Cloudinary upload preset
+  
+      try {
+        const response = await fetch("https://api.cloudinary.com/v1_1/dgzdafk3d/image/upload", {
+          method: "POST",
+          body: formDataForUpload,
+        });
+        const data = await response.json();
+        // Update personPhotoUrl with Cloudinary response URL
+        personPhotoUrl = data.secure_url;
+      } catch (error) {
+        console.error("Error uploading photo:", error);
+        setErrorMessage("Error uploading photo.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     const updatedFormData = {
-      ...formData,
-      is_living: formData.is_living === 'living',
-    };
+    ...formData,
+    photo: personPhotoUrl, // Use the updated photo URL
+    is_living: formData.is_living === 'living',
+  };
     
     try {
       if (personData && personData.id) {
@@ -61,16 +86,14 @@ const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }
         await createPerson(updatedFormData); 
       }
       setSuccessMessage('Person saved successfully!');  
-      if (onSubmit) {
-        onSubmit(updatedFormData);
-      }
+      onSubmit(updatedFormData);
     } catch (error) {
       if (error.response) {
         console.error('Error details:', error.response.data);
-        setSuccessMessage('Error: ' + JSON.stringify(error.response.data));
+        setErrorMessage('Error: ' + JSON.stringify(error.response.data));
       } else {
         console.error('Error saving person:', error);
-        setSuccessMessage('An error occurred while saving the person.');
+        setErrorMessage('An error occurred while saving the person.');
       }
     } finally {
       setIsSubmitting(false);
@@ -287,6 +310,7 @@ const Form = ({ visible, onClose, personData, onSubmit, tree_id, ...otherProps }
           {isSubmitting ? 'Saving...' : 'Save'}
         </button>
         {successMessage && <div className="success-message">{successMessage}</div>}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
       </form>
     </div>
   );

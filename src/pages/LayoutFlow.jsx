@@ -18,6 +18,7 @@ export default function LayoutFlow() {
   const [edges, setEdges] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [isFormVisible, setFormVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   useEffect(() => {
     const fetchNodes = async () => {
@@ -75,10 +76,16 @@ export default function LayoutFlow() {
   };
 
   const handleSave = async (updatedData) => {
+    if (isSubmitting) return; // Prevent multiple calls
+    setIsSubmitting(true);
+
+    console.log('handleSave called with data:', updatedData);
+
     if (selectedPerson && selectedPerson.id) {
       try {
-        console.log('Updating person:', selectedPerson.id, updatedData); 
+        console.log('Updating person with id:', selectedPerson.id);
         await updatePerson(selectedPerson.id, updatedData);
+        console.log('Person updated successfully');
         setNodes(prevNodes => {
   
           const updatedNodes = prevNodes.map(node =>
@@ -96,11 +103,12 @@ export default function LayoutFlow() {
       try {
         console.log('Creating new person with data:', updatedData);
         
-        const { person, node } = await createPerson(updatedData); 
+        const { person } = await createPerson(updatedData); 
         console.log('Person created:', person); 
-  
-        if (node && node.error === 'Node already exists for this person in this tree.') {
-          console.log('Node already exists:', node);  
+        console.log('Associating person with existing node_id:', selectedPerson.node_id);
+        await updateNode(selectedPerson.node_id, { person_id: person.id });
+/*         if (node && node.error === 'Node already exists for this person in this tree.') {
+          console.log('Node already exists for this person in the tree:', node);
           return;
         }
 
@@ -114,27 +122,20 @@ export default function LayoutFlow() {
         tree_id: tree_id,
         });
   
-        console.log('New node created:', nodeResponse); 
+        console.log('New node created:', nodeResponse);  */
   
-        setNodes(prevNodes => {
-          console.log('Previous nodes before adding new node:', prevNodes);
-  
-          const newNodes = [
-            ...prevNodes,
-            {
-              id: nodeResponse.id,  
-              data: { label: person.first_name, personId: person.id },  
-              position: { x: 100, y: 100 },
-              type: 'custom',
-            },
-          ];
-          console.log('New nodes after adding new node:', newNodes); 
-          return newNodes;
-        });
+        setNodes(prevNodes => 
+          prevNodes.map(node => 
+            node.id === selectedPerson.node_id
+              ? { ...node, data: { ...node.data, label: person.first_name, personId: person.id } }
+              : node
+          )
+        );
       } catch (error) {
-        console.error('Error creating person or node:', error);
+        console.error('Error creating person or updating node:', error);
       }
     }
+    setIsSubmitting(false);
   };
 
   useEffect(() => {

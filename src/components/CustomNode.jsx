@@ -183,7 +183,7 @@ const CustomNode = ({ id, data, updateNode }) => {
         className="delete-node-button menos-button" 
         onClick={handleDeleteNode}
       >
-          -
+          X
       </button>
       
 
