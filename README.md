@@ -12,12 +12,12 @@
 
 Future Developments:
 
-    Collaborative Contributions: Allow multiple users to add and edit the same family tree, making it easier to collaborate with relatives.
-    Advanced Search & Connections: Enable users to search for and connect with long-distance family members, bridging gaps across generations and geographies.
-    Historical Insights: Access historical information and records to uncover and understand your family's roots and heritage.
+   - Collaborative Contributions: Allow multiple users to add and edit the same family tree, making it easier to collaborate with relatives.
+   - Advanced Search & Connections: Enable users to search for and connect with long-distance family members, bridging gaps across generations and geographies.
+   - Historical Insights: Access historical information and records to uncover and understand your family's roots and heritage.
 
-(public/readme_img/Screen_createTree.jpg)
-(public/readme_img/screen_nodes_form.jpg)
+![!Screenshot1](public/readme_img/Screen_createTree.jpg)
+![!Screenshot2](public/readme_img/screen_nodes_form.jpg)
 
 ## Technologies 🚀
 
@@ -42,6 +42,6 @@ The backend of **familyMe** is built using the following key technologies:
 ## Author 👩‍💻
 
 This project was created by:
-- Lynn Poh (https://github.com/Dpoetess)
-[![LinkedIn](https://img.icons8.com/ios-glyphs/30/0077b5/linkedin.png)](https://www.linkedin.com/in/lynn-poh/)
-for her individual project in during the Fullstack Developer Bootcamp organized by Factoría F5 academy.
+
+[![LinkedIn](https://img.icons8.com/ios-glyphs/30/0077b5/linkedin.png)](https://www.linkedin.com/in/lynn-poh/) Lynn Poh
+for her individual project during the Fullstack Developer Bootcamp organized by Factoría F5 academy.
